@@ -63,7 +63,7 @@
 // *******************************SWITCH SELECTION*****************************
 // *************CHAN_ON - on always ( all protocols)
 // *************CHAN_OFF - off always ( all protocols)
-// *************Aux channels are selectable as CHAN_5 through CHAN_10 for DEVO and MULTIMODULE users
+// *************Aux channels are selectable as CHAN_5 through CHAN_12 for DEVO and through CHAN_13 (but no CHAN_11) for MULTIMODULE users
 // *************Toy transmitter mapping is CHAN_5 (rates button), CHAN_6 (stick gestures RRD/LLD), 
 //**************CHAN_7 (headfree button), CHAN_8 (roll trim buttons), CHAN_9 (pitch trim buttons)
 
@@ -101,6 +101,36 @@
 //#define STOCK_TX_AUTOCENTER
 
 
+// *******************************ANALOG AUX CHANNELS*****************************
+// For some protocols, use Tx channels as auxiliary analog values
+// Bayang with analog aux protocol (Tx optional mode enabled in modified Multimodule and DeviationTx) has two analog channels available:
+//     Multimodule: channels 14 and 15
+//     Deviation: channels 13 and 14
+// Sbus and DSM can use analog values from any channel
+// comment to disable
+//#define USE_ANALOG_AUX
+// Select analog feature for each channel
+// comment to disable
+#define ANALOG_RATE_MULT CHAN_14
+#define ANALOG_MAX_ANGLE CHAN_15
+//#define ANALOG_RP_P  CHAN_14 // Adjust Roll and Pitch together
+//#define ANALOG_RP_I  CHAN_14
+//#define ANALOG_RP_D  CHAN_15
+//#define ANALOG_RP_PD CHAN_15 // Adjust Roll and Pitch P & D together
+//#define ANALOG_R_P   CHAN_14 // Adjust Roll only
+//#define ANALOG_R_I   CHAN_14
+//#define ANALOG_R_D   CHAN_15
+//#define ANALOG_P_P   CHAN_14 // Adjust Pitch only
+//#define ANALOG_P_I   CHAN_14
+//#define ANALOG_P_D   CHAN_15
+//#define ANALOG_Y_P   CHAN_14 // Adjust Yaw only
+//#define ANALOG_Y_I   CHAN_14
+//#define ANALOG_Y_D   CHAN_15
+// The following define can always be left uncommented. It just gathers all analog aux PID settings together into one define.
+#if defined USE_ANALOG_AUX && (defined ANALOG_R_P || defined ANALOG_R_I || defined ANALOG_R_D || defined ANALOG_P_P || defined ANALOG_P_I || defined ANALOG_P_D || defined ANALOG_Y_P || defined ANALOG_Y_I || defined ANALOG_Y_D || defined ANALOG_RP_P || defined ANALOG_RP_I || defined ANALOG_RP_D || defined ANALOG_RP_PD)
+    #define ANALOG_AUX_PIDS
+#endif
+
 
 //**********************************************************************************************************************
 //***********************************************VOLTAGE SETTINGS*******************************************************
@@ -133,8 +163,19 @@
 #define HYST 0.10
 
 // *************automatic voltage telemetry correction/calibration factor - change the values below if voltage telemetry is inaccurate
+// Corrects for an offset error in the telemetry measurement (same offset across the battery voltage range)
 #define ACTUAL_BATTERY_VOLTAGE 4.20
 #define REPORTED_TELEMETRY_VOLTAGE 4.20
+
+// *************two-point automatic voltage telemetry correction/calibration factor - change the values below if voltage telemetry is inaccurate
+// Use this method when the difference at the high end is different than the difference at the low end. Corrects both slope and offset of the _assumed_ linear error.
+//#define USE_TWO_POINT_VOLTAGE_CORRECTION
+#define ACTUAL_BATTERY_VOLTAGE_LO 3.60
+#define ACTUAL_BATTERY_VOLTAGE_HI 4.20
+#define REPORTED_TELEMETRY_VOLTAGE_LO 3.60
+#define REPORTED_TELEMETRY_VOLTAGE_HI 4.20
+#define ACTUAL_BATTERY_VOLTAGE_RANGE (ACTUAL_BATTERY_VOLTAGE_HI - ACTUAL_BATTERY_VOLTAGE_LO)
+#define REPORTED_TELEMETRY_VOLTAGE_RANGE (REPORTED_TELEMETRY_VOLTAGE_HI - REPORTED_TELEMETRY_VOLTAGE_LO)
 
 
 
@@ -198,6 +239,11 @@
  
 // *************throttle angle compensation in level mode
 //#define AUTO_THROTTLE
+
+
+// Betaflight like mix scaling
+//#define MIX_SCALING
+
 
 // *************mix lower throttle reduces thrust imbalances by reducing throttle proportionally to the adjustable reduction percent
 // *************mix increase throttle increases the authority of the pid controller at lowest throttle values like airmode when combined with idle up

@@ -65,6 +65,9 @@ extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
 // 1 if change in aux from last value
 extern char auxchange[AUXNUMBER];
+extern float aux_analog[AUXNUMBER];
+extern float lastaux_analog[AUXNUMBER];
+extern char aux_analogchange[AUXNUMBER];
 
 int failsafe = 0;
 
@@ -202,6 +205,12 @@ float packettodata(int *data)
     return (((data[0] & 0x0003) * 256 + data[1]) - 512) * 0.001953125;
 }
 
+float bytetodata(int byte)
+{
+    //return (byte - 128) * 0.0078125; // -1 to 1
+    return byte * 0.00390625; // 0 to 1
+}
+
 
 // decode the receive data and set variables accordingly
 static int decodepacket( void)
@@ -250,11 +259,32 @@ static int decodepacket( void)
 							
 			    aux[CH_FLIP] = (rxdata[2] & 0x08) ? 1 : 0;
 
+#ifdef USE_ANALOG_AUX
+			    aux[CH_EXPERT] = (rxdata[1] > 0x7F) ? 1 : 0;
+#else
 			    aux[CH_EXPERT] = (rxdata[1] == 0xfa) ? 1 : 0;
+#endif
 
 			    aux[CH_HEADFREE] = (rxdata[2] & 0x02) ? 1 : 0;
 
 			    aux[CH_RTH] = (rxdata[2] & 0x01) ? 1 : 0;	// rth channel
+
+#ifdef USE_ANALOG_AUX
+			    // Assign all analog versions of channels based on boolean channel data
+			    for (int i = 0; i < AUXNUMBER - 2; i++)
+			    {
+            if (i == CH_ANA_AUX1)
+              aux_analog[CH_ANA_AUX1] = bytetodata(rxdata[1]);
+            else if (i == CH_ANA_AUX2)
+              aux_analog[CH_ANA_AUX2] = bytetodata(rxdata[13]);
+            else
+              aux_analog[i] = aux[i] ? 1.0 : 0.0;
+            aux_analogchange[i] = 0;
+            if (lastaux_analog[i] != aux_analog[i])
+              aux_analogchange[i] = 1;
+            lastaux_analog[i] = aux_analog[i];
+          }
+#endif
 
 
 			for ( int i = 0 ; i < AUXNUMBER - 2 ; i++)
@@ -317,7 +347,11 @@ void checkrx(void)
                 // rx bind mode , packet received
 			    xn_readpayload(rxdata, 15);
 
+#ifdef USE_ANALOG_AUX
+			    if (rxdata[0] == 162)
+#else
 			    if (rxdata[0] == 164)
+#endif
 			      {	// bind packet
 				      rfchannel[0] = rxdata[6];
 				      rfchannel[1] = rxdata[7];

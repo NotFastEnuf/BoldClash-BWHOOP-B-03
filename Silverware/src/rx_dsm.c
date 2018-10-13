@@ -23,6 +23,9 @@ extern float rx[4];
 extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
 extern char auxchange[AUXNUMBER];
+extern float aux_analog[AUXNUMBER];
+extern float lastaux_analog[AUXNUMBER];
+extern char aux_analogchange[AUXNUMBER];
 int failsafe = 0;
 int rxmode = 0;
 int rx_ready = 0;
@@ -215,6 +218,28 @@ void rx_init(void)
     
 }
 
+float map_channel_to_minus_one_to_one(uint32_t channel)
+{
+#ifdef RX_DSMX_2048
+    return (channel*0.000998005f)-1.02195767f;
+#else //#ifdef RX_DSM2_1024
+    return (channel*0.00199601f)-1.02195767f;
+#endif
+}
+
+float map_channel_to_zero_to_one(uint32_t channel)
+{
+    float mapped;
+#ifdef RX_DSMX_2048
+    mapped = (channel*0.0004990025f)-0.0109780552f;
+#else //#ifdef RX_DSM2_1024
+    mapped = (channel*0.0009980050f)-0.0109780552f;
+#endif
+    if ( mapped > 1 ) mapped = 1;
+    if ( mapped < 0 ) mapped = 0;
+    return mapped;
+}
+
 void checkrx()
 
 {
@@ -237,26 +262,13 @@ if (gettime() - flagged_time > FAILSAFETIME) framestarted = 0;            		//wa
 		
          
 if ( framestarted == 1){
-				if ((bind_safety < 900) && (bind_safety > 0)) rxmode = RXMODE_BIND;																								// normal rx mode - removes waiting for bind led leaving failsafe flashes as data starts to come in
+		    if ((bind_safety < 900) && (bind_safety > 0)) rxmode = RXMODE_BIND;																								// normal rx mode - removes waiting for bind led leaving failsafe flashes as data starts to come in
 		   
-      // AETR channel order
-	#ifdef RX_DSMX_2048
-        rx[0] = (channels[1]*0.000998005f)-1.02195767f;  
-        rx[1] = (channels[2]*0.000998005f)-1.02195767f; 
-        rx[2] = (channels[3]*0.000998005f)-1.02195767f;
-        rx[3] = (channels[0]*0.0004990025f)-0.0109780552f;
-				if ( rx[3] > 1 ) rx[3] = 1;	
-				if ( rx[3] < 0 ) rx[3] = 0;
-	#endif
-
-	#ifdef RX_DSM2_1024
-        rx[0] = (channels[1]*0.00199601f)-1.02195767f;  
-        rx[1] = (channels[2]*0.00199601f)-1.02195767f; 
-        rx[2] = (channels[3]*0.00199601f)-1.02195767f;
-        rx[3] = (channels[0]*0.000998005f)-0.0109780552f;
-				if ( rx[3] > 1 ) rx[3] = 1;	
-				if ( rx[3] < 0 ) rx[3] = 0;
-	#endif
+        // AETR channel order
+        rx[0] = map_channel_to_minus_one_to_one(channels[1]);
+        rx[1] = map_channel_to_minus_one_to_one(channels[2]);
+        rx[2] = map_channel_to_minus_one_to_one(channels[3]);
+        rx[3] = map_channel_to_zero_to_one(channels[0]);
 				
 				if (aux[LEVELMODE]){
 							if (aux[RACEMODE] && !aux[HORIZON]){
@@ -291,6 +303,36 @@ if ( framestarted == 1){
 				aux[CHAN_6] = (channels[5] > 550) ? 1 : 0;													//being controlled by a transmitter using a 3 pos switch in center state
 				aux[CHAN_7] = (channels[6] > 550) ? 1 : 0;						
 	#endif
+
+#ifdef USE_ANALOG_AUX
+				// Map to range -1 to 1
+				aux_analog[CHAN_5] = map_channel_to_zero_to_one(channels[4]);
+				aux_analog[CHAN_6] = map_channel_to_zero_to_one(channels[5]);
+				aux_analog[CHAN_7] = map_channel_to_zero_to_one(channels[6]);
+  #ifdef RX_DSMX_2048
+				aux_analog[CHAN_8] = map_channel_to_zero_to_one(channels[7]);
+				aux_analog[CHAN_9] = map_channel_to_zero_to_one(channels[8]);
+				aux_analog[CHAN_10] = map_channel_to_zero_to_one(channels[9]);
+  #endif
+
+				aux_analogchange[CHAN_5] = (aux_analog[CHAN_5] != lastaux_analog[CHAN_5]) ? 1 : 0;
+				aux_analogchange[CHAN_6] = (aux_analog[CHAN_6] != lastaux_analog[CHAN_6]) ? 1 : 0;
+				aux_analogchange[CHAN_7] = (aux_analog[CHAN_7] != lastaux_analog[CHAN_7]) ? 1 : 0;
+  #ifdef RX_DSMX_2048
+				aux_analogchange[CHAN_8] = (aux_analog[CHAN_8] != lastaux_analog[CHAN_8]) ? 1 : 0;
+				aux_analogchange[CHAN_9] = (aux_analog[CHAN_9] != lastaux_analog[CHAN_9]) ? 1 : 0;
+				aux_analogchange[CHAN_10] = (aux_analog[CHAN_10] != lastaux_analog[CHAN_10]) ? 1 : 0;
+  #endif
+
+				lastaux_analog[CHAN_5] = aux_analog[CHAN_5];
+				lastaux_analog[CHAN_6] = aux_analog[CHAN_6];
+				lastaux_analog[CHAN_7] = aux_analog[CHAN_7];
+  #ifdef RX_DSMX_2048
+				lastaux_analog[CHAN_8] = aux_analog[CHAN_8];
+				lastaux_analog[CHAN_9] = aux_analog[CHAN_9];
+				lastaux_analog[CHAN_10] = aux_analog[CHAN_10];
+  #endif
+#endif
 
 
 				if (bind_safety > 900){								//requires 10 good frames to come in before rx_ready safety can be toggled to 1.  900 is about 2 seconds of good data

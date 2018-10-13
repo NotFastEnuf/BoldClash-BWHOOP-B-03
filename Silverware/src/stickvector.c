@@ -1,4 +1,5 @@
 #include "config.h"
+#include "defines.h"
 #include "util.h"
 
 #include <math.h>
@@ -9,6 +10,7 @@
 extern float GEstG[3];
 extern float Q_rsqrt( float number );
 extern char aux[];
+extern float aux_analog[];
 
 // error vector between stick position and quad orientation
 // this is the output of this function
@@ -31,13 +33,19 @@ else
 {
     last_rx[0] = rx_input[0];
     last_rx[1] = rx_input[1]; 
-	
+    
+// max angle
+#if (defined USE_ANALOG_AUX && defined ANALOG_MAX_ANGLE)
+    float max_angle = aux_analog[ANALOG_MAX_ANGLE] * 90.0f;
+#else
+    #define max_angle LEVEL_MAX_ANGLE
+#endif
 	
 float pitch, roll;
 
 	// rotate down vector to match stick position
-pitch = rx_input[1] * LEVEL_MAX_ANGLE * DEGTORAD + (float) TRIM_PITCH  * DEGTORAD;
-roll = rx_input[0] * LEVEL_MAX_ANGLE * DEGTORAD + (float) TRIM_ROLL  * DEGTORAD;
+pitch = rx_input[1] * max_angle * DEGTORAD + (float) TRIM_PITCH  * DEGTORAD;
+roll = rx_input[0] * max_angle * DEGTORAD + (float) TRIM_ROLL  * DEGTORAD;
 
 stickvector[0] = fastsin( roll );
 stickvector[1] = fastsin( pitch );

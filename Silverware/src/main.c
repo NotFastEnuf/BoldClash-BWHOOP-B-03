@@ -110,6 +110,11 @@ char aux[AUXNUMBER] = { 0 ,0 ,0 , 0 , 0 , 0};
 char lastaux[AUXNUMBER];
 // if an aux channel has just changed
 char auxchange[AUXNUMBER];
+// analog version of each aux channel
+float aux_analog[AUXNUMBER];
+float lastaux_analog[AUXNUMBER];
+// if an analog aux channel has just changed
+char aux_analogchange[AUXNUMBER];
 
 // bind / normal rx mode
 extern int rxmode;
@@ -203,7 +208,12 @@ aux[CH_AUX1] = 1;
 #endif
 
 
-	
+#ifdef USE_ANALOG_AUX
+  // saves initial pid values - after flash loading
+  pid_init();
+#endif
+
+
 	rx_init();
 
 	

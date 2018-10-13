@@ -5,6 +5,6 @@ int next_pid_axis( void); // Return value : 0 - Roll, 1 - Pitch, 2 - Yaw
 int increase_pid( void );
 int decrease_pid( void );
 void pid_precalc( void);
-
+void pid_init( void );
 
 

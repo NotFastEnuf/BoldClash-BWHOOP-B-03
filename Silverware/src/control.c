@@ -73,6 +73,8 @@ extern float looptime;
 
 extern char auxchange[AUXNUMBER];
 extern char aux[AUXNUMBER];
+extern float aux_analog[AUXNUMBER];
+extern char aux_analogchange[AUXNUMBER];
 
 extern int ledcommand;
 extern int ledblink;
@@ -106,7 +108,10 @@ void control( void)
 
 // rates / expert mode
 float rate_multiplier = 1.0;
-	
+
+#if (defined USE_ANALOG_AUX && defined ANALOG_RATE_MULT)
+	rate_multiplier = aux_analog[ANALOG_RATE_MULT];
+#else
 	if ( aux[RATES]  )
 	{		
 		
@@ -116,7 +121,7 @@ float rate_multiplier = 1.0;
 		rate_multiplier = LOW_RATES_MULTI;
 	}
 	// make local copy
-	
+#endif
 	
 #ifdef INVERTED_ENABLE	
     extern int pwmdir;
@@ -806,6 +811,32 @@ if ( overthrottle > 0.1f) ledcommand = 1;
 }
 #endif
 
+
+#ifdef MIX_SCALING
+		float minMix = 1000.0f;
+		float maxMix = -1000.0f;
+		for (int i = 0; i < 4; ++i) {
+			if (mix[i] < minMix) minMix = mix[i];
+			if (mix[i] > maxMix) maxMix = mix[i];
+		}
+		const float mixRange = maxMix - minMix;
+		float reduceAmount = 0.0f;
+		if (mixRange > 1.0f) {
+			const float scale = 1.0f / mixRange;
+			for (int i = 0; i < 4; ++i)
+				mix[i] *= scale;
+			minMix *= scale;
+			reduceAmount = minMix;
+		} else {
+			if (maxMix > 1.0f)
+				reduceAmount = maxMix - 1.0f;
+			else if (minMix < 0.0f)
+				reduceAmount = minMix;
+		}
+		if (reduceAmount != 0.0f)
+			for (int i = 0; i < 4; ++i)
+				mix[i] -= reduceAmount;
+#endif
             
             
             

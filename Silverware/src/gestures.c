@@ -9,6 +9,7 @@
 extern int ledcommand;
 extern int ledblink;
 extern int onground;
+extern int analog_aux_pids_adjusted;
 extern char aux[AUXNUMBER];
 
 int pid_gestures_used = 0;
@@ -23,8 +24,13 @@ void gestures( void)
             if (command == GESTURE_DDD)
 		    { 
 			                  
+            #ifdef ANALOG_AUX_PIDS
+                //skip accel calibration if pid gestures used or analog aux pids adjustments made
+                if ( !pid_gestures_used && !analog_aux_pids_adjusted )
+            #else
                 //skip accel calibration if pid gestures used
                 if ( !pid_gestures_used )
+            #endif
                 { 
                     gyro_cal();	// for flashing lights
                     acc_cal();                   
@@ -33,6 +39,9 @@ void gestures( void)
                 {
                     ledcommand = 1;
                     pid_gestures_used = 0;
+            #ifdef ANALOG_AUX_PIDS
+                    analog_aux_pids_adjusted = 0;
+            #endif
                 }
                 #ifdef FLASH_SAVE2
                 extern float accelcal[3];
@@ -48,8 +57,14 @@ void gestures( void)
                 extern int number_of_increments[3][3];
                 for( int i = 0 ; i < 3 ; i++)
                     for( int j = 0 ; j < 3 ; j++)
-                        number_of_increments[i][j] = 0; 
-                #endif
+                        number_of_increments[i][j] = 0;
+                
+                #ifdef USE_ANALOG_AUX
+                // reset analog aux pids array
+                pid_init();
+                #endif // USE_ANALOG_AUX
+
+                #endif // FLASH_SAVE1
 			    // reset loop time 
 			    extern unsigned long lastlooptime;
 			    lastlooptime = gettime();

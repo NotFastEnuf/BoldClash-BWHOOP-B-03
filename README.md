@@ -23,6 +23,58 @@ STEP 1:  Open config.h with keil and make edits to set your selections in 6 cat
          
 STEP 2:  Open pid.c with keil and either edit pids to your preferred values or select a set of pids that I have prepared.   I plan to keep all my tunes in pid.c and will have them labeled and noted with the associated filter settings for each type of build.  All you have to do to use one of my tunes is uncomment the pid group you want to use and make sure the others are commented out.  I will keep whatever pids I'm using updated here if I change them and the default set will always be for a whoop with fpv gear installed.  Setpoint weight values for P are also just below pids - if you want a sharper stick feel on one of my tunes then change these values closer to 1.0.  Stick Accelerator and transition values are here too.  There are two profiles you can populate which are switchable via auxillary channel.
 
+## brianquad Notes - Additions for Analog Aux channels
+
+This option (controlled in config.h) adds support for Analog Aux channels to control certain pre-programmed features. These are intended to be used with a transmitter with knobs/sliders to easily alter parameters while flying. These are controlled by #define lines in config.h. Enable these features by uncommenting the "#define USE_ANALOG_AUX" line. Commenting that line disables all analog aux channels at the compiler level, meaning they do not make the built firmware bigger or slower than it was before.
+
+Initially, these features include:
+1. Analog Rate Multiplier (ANALOG_RATE_MULT)
+   - Use a tranmitter knob to control your rates to help find your sweet spot without flashing in between
+   - Set your MAX_RATE and MAX_RATE_YAW to the highest rate you might want
+   - Use the assigned knob to adjust beween 0 and 100% of that rate in a linear scale
+     - Putting the knob at its middle point will give you half of your MAX_RATE
+2. Analog Max Angle for Level mode (ANALOG_MAX_ANGLE)
+   - When in Angle/Level mode, the maximum angle the quad is allowed to tilt (controlling your max speed, etc.) is set by the LEVEL_MAX_ANGLE define
+   - When enabling ANALOG_MAX_ANGLE, the LEVEL_MAX_ANGLE define is ignored
+   - The knob controls the maximum angle from 0 to 90 degrees in a linear scale
+     - Putting the knob at its middle point will give you a maximum angle of 45 degrees
+3. PID adjustments (ANALOG_RP_P, etc.)
+   - Assigning a knob to one of these defines lets you alter that PID setting from 0.5X to 1.5X of the current setting in pid.c
+   - Each of the P, I, or D for Roll, Pitch, and Yaw can be selected in config.h, or Roll and Pitch P, I, or D can be selected together on one knob
+   - The PID adjustments can be saved, just like the classic Silverware gesture PID adjustments. To save a new value, use the Down Down Down (DDD) gesture to write the current PID values to flash (including your new one(s)) and re-center your adjusted values. This means to keep your new value after saving, you must re-center your knob/slider.
+
+These initial features are mostly meant to start a conversation on how Analog Aux channels could be used. For example, I'm sure there are better ways to do live PID adjustment with a couple of analog knobs!
+
+###How do you access/assign analog channels? What channels can be used?
+
+For Sbus and DSM, you can assign any of the channels to use as analog aux channels.
+
+For Bayang, you can use a modified version of the Bayang protocol I've made to the Multiprotocol Tx and Deviation Tx firmware that adds two 8-bit analog channels to the protocol.
+
+The Multiprotocol module uses channels 14 and 15 for these analog channels. Set the "Option/Telemetry" value for the Bayang protocol on the Taranis to 2 or 3 (2 to get only the analog channels, 3 to get both Telemetry and the analog channels).
+
+Deviation uses channels 13 and 14. Enable the Aux Analog option for the Bayang protocol.
+
+For both the Multiprotocol module and Deviation, Silverware will not bind with a transmitter that does not have matching options (both Telemetry and Analog Aux channels).
+
+These modifications can be found on the analog aux branch in my forks on GitHub (for now, you _must_ select the branch rather than master):
+	https://github.com/brianquad/DIY-Multiprotocol-TX-Module/tree/bayang-analog-aux
+	https://github.com/brianquad/deviation/tree/bayang-analog-aux
+
+####How to use Trim Switches for Silverware Analog Aux channels in Deviation
+VIRTUAL POT (Example, by Ian444):
+
+1. Say you want to assign LV (left vertical) trim switch to drive the radio channel 11 as if it were a pot, each click driving the pot in one direction or the other, using Virt3 as the intermediate link. (It could be any radio channel and use any free virtual channel.)
+
+2. Go into the TRIMS menu and set the LV trim to Virt3, so replace "whatever-is-there" with Virt3 i.e. it should look like: Virt3/step size/TRIMLV+. You can highlight "Virt3" and hit enter to get into the submenu if you need to. Set step size, trim+, trim- etc. Step size 10 gives 10 clicks up and 10 clicks down. Save it.
+
+3. Go into the MIXER menu and find Virt3, set the mixer type as "simple", Src is Virt3, curve is 1-to-1, scale is 0 and offset is 0. Save it. The output of Virt3 is -100 to +100 with 0 being centre. You can check this in the Transmitter Menu/Channel Monitor Virt3 bar graph display.
+
+4. Go into the mixer menu and find the Ch11 mixer and set this: mixer type is complex, Mixers is 1, Page is 1, Switch is none, Mux is replace, Src is Virt3, Curve is 1-to-1, scale is 100, offest is 0, and set NO TRIM instead of TRIM. You can also set limits in the Ch11 first menu if required.
+
+5. Check the radio output in the Transmitter Menu/Channel Monitor, you should see the CH11 output following the trim switch.
+
+
 ## Current Experimental Features and DEVIATIONS FROM STOCK SILVERWARE 
 
  - Target Selection:  define your board type and hardware settings are automatically selected for E011 (OLD STYLE), Bwhoop, bwhoop pro, E011c, beta fpv lite, and ALIENWHOOP ZER0.  
