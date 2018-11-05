@@ -62,17 +62,15 @@ These modifications can be found on the analog aux branch in my forks on GitHub 
 	https://github.com/brianquad/deviation/tree/bayang-analog-aux
 
 ####How to use Trim Switches for Silverware Analog Aux channels in Deviation
-VIRTUAL POT (Example, by Ian444):
+Example:
 
-1. Say you want to assign LV (left vertical) trim switch to drive the radio channel 11 as if it were a pot, each click driving the pot in one direction or the other, using Virt3 as the intermediate link. (It could be any radio channel and use any free virtual channel.)
+1. Say you want to assign the LV (left vertical) trim switch to drive the radio channel 11 as if it were a pot, each click driving the pot in one direction or the other, click up to increase and click down to decrease.
 
-2. Go into the TRIMS menu and set the LV trim to Virt3, so replace "whatever-is-there" with Virt3 i.e. it should look like: Virt3/step size/TRIMLV+. You can highlight "Virt3" and hit enter to get into the submenu if you need to. Set step size, trim+, trim- etc. Step size 10 gives 10 clicks up and 10 clicks down. Save it.
+2. Go into the Model Menu/5.Trims menu and set the LV trim to Ch11, so replace whatever-is-there (probably throttle but depends on what mode you fly) with CH11 i.e. it should look like: Ch11/step size/TRIMLV+. You can highlight throttle/whatever-is-there and hit enter to get into the submenu. Set Ch11 and set Trim Step to 10. this gives 10 clicks up and 10 clicks down for full range +100 to -100. Save it (highlight Save and press and hold the Enter button).
 
-3. Go into the MIXER menu and find Virt3, set the mixer type as "simple", Src is Virt3, curve is 1-to-1, scale is 0 and offset is 0. Save it. The output of Virt3 is -100 to +100 with 0 being centre. You can check this in the Transmitter Menu/Channel Monitor Virt3 bar graph display.
+3. Go into the MIXER menu and find CH11, set the mixer type as "simple", Src is "none", curve is 1-to-1, scale is 0 and offset is 0. Save it. 
 
-4. Go into the mixer menu and find the Ch11 mixer and set this: mixer type is complex, Mixers is 1, Page is 1, Switch is none, Mux is replace, Src is Virt3, Curve is 1-to-1, scale is 100, offest is 0, and set NO TRIM instead of TRIM. You can also set limits in the Ch11 first menu if required.
-
-5. Check the radio output in the Transmitter Menu/Channel Monitor, you should see the CH11 output following the trim switch.
+4. Check the radio output in the Transmitter Menu/Channel Monitor, you should see the CH11 output following the trim switch, you should see the Ch11 output going from -100 to +100 in steps of 10.
 
 
 ## Current Experimental Features and DEVIATIONS FROM STOCK SILVERWARE 
