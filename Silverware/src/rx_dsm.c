@@ -34,6 +34,7 @@ int rx_bind_enable = 0;
 
 // internal dsm variables
 
+#define DSM_SCALE_PERCENT 150												//adjust this line to match the stick scaling % set in your transmitter
 #define SERIAL_BAUDRATE 115200
 #define SPEK_FRAME_SIZE 16   
 #define SPEKTRUM_NEEDED_FRAME_INTERVAL  5000
@@ -65,7 +66,8 @@ int rx_frame_pending;
 int rx_frame_pending_last;
 uint32_t flagged_time;
 static volatile uint8_t spekFrame[SPEK_FRAME_SIZE];
-
+float dsm2_scalefactor = (0.29354210f/DSM_SCALE_PERCENT);
+float dsmx_scalefactor = (0.14662756f/DSM_SCALE_PERCENT);
 
 // Receive ISR callback
 void USART1_IRQHandler(void)
@@ -218,28 +220,6 @@ void rx_init(void)
     
 }
 
-float map_channel_to_minus_one_to_one(uint32_t channel)
-{
-#ifdef RX_DSMX_2048
-    return (channel*0.000998005f)-1.02195767f;
-#else //#ifdef RX_DSM2_1024
-    return (channel*0.00199601f)-1.02195767f;
-#endif
-}
-
-float map_channel_to_zero_to_one(uint32_t channel)
-{
-    float mapped;
-#ifdef RX_DSMX_2048
-    mapped = (channel*0.0004990025f)-0.0109780552f;
-#else //#ifdef RX_DSM2_1024
-    mapped = (channel*0.0009980050f)-0.0109780552f;
-#endif
-    if ( mapped > 1 ) mapped = 1;
-    if ( mapped < 0 ) mapped = 0;
-    return mapped;
-}
-
 void checkrx()
 
 {
@@ -260,15 +240,30 @@ spektrumFrameStatus();
 if (rx_frame_pending != rx_frame_pending_last) flagged_time = gettime();  		//updates flag to current time only on changes of losing a frame or getting one back
 if (gettime() - flagged_time > FAILSAFETIME) framestarted = 0;            		//watchdog if more than 1 sec passes without a frame causes failsafe
 		
-         
+        
 if ( framestarted == 1){
 		    if ((bind_safety < 900) && (bind_safety > 0)) rxmode = RXMODE_BIND;																								// normal rx mode - removes waiting for bind led leaving failsafe flashes as data starts to come in
 		   
-        // AETR channel order
-        rx[0] = map_channel_to_minus_one_to_one(channels[1]);
-        rx[1] = map_channel_to_minus_one_to_one(channels[2]);
-        rx[2] = map_channel_to_minus_one_to_one(channels[3]);
-        rx[3] = map_channel_to_zero_to_one(channels[0]);
+      // TAER channel order
+	#ifdef RX_DSMX_2048																												
+	      rx[0] = (channels[1] - 1024.0f) * dsmx_scalefactor;
+        rx[1] = (channels[2] - 1024.0f) * dsmx_scalefactor;
+        rx[2] = (channels[3] - 1024.0f) * dsmx_scalefactor;
+        rx[3] =((channels[0] - 1024.0f) * dsmx_scalefactor * 0.5f) + 0.5f;
+
+				if ( rx[3] > 1 ) rx[3] = 1;	
+				if ( rx[3] < 0 ) rx[3] = 0;
+	#endif
+
+	#ifdef RX_DSM2_1024
+        rx[0] = (channels[1] - 512.0f) * dsm2_scalefactor;
+        rx[1] = (channels[2] - 512.0f) * dsm2_scalefactor;
+        rx[2] = (channels[3] - 512.0f) * dsm2_scalefactor;	
+        rx[3] =((channels[0] - 512.0f) * dsm2_scalefactor * 0.5f) + 0.5f;
+
+				if ( rx[3] > 1 ) rx[3] = 1;	
+				if ( rx[3] < 0 ) rx[3] = 0;
+	#endif
 				
 				if (aux[LEVELMODE]){
 							if (aux[RACEMODE] && !aux[HORIZON]){
@@ -305,15 +300,22 @@ if ( framestarted == 1){
 	#endif
 
 #ifdef USE_ANALOG_AUX
-				// Map to range -1 to 1
-				aux_analog[CHAN_5] = map_channel_to_zero_to_one(channels[4]);
-				aux_analog[CHAN_6] = map_channel_to_zero_to_one(channels[5]);
-				aux_analog[CHAN_7] = map_channel_to_zero_to_one(channels[6]);
-  #ifdef RX_DSMX_2048
-				aux_analog[CHAN_8] = map_channel_to_zero_to_one(channels[7]);
-				aux_analog[CHAN_9] = map_channel_to_zero_to_one(channels[8]);
-				aux_analog[CHAN_10] = map_channel_to_zero_to_one(channels[9]);
-  #endif
+
+	// Map to range -1 to 1
+	#ifdef RX_DSM2_1024
+		aux_analog[CHAN_5] = (channels[4] - 512.0f) * dsm2_scalefactor;
+		aux_analog[CHAN_6] = (channels[5] - 512.0f) * dsm2_scalefactor;
+		aux_analog[CHAN_7] = (channels[6] - 512.0f) * dsm2_scalefactor;	
+	#endif
+
+	#ifdef RX_DSMX_2048
+		aux_analog[CHAN_5] = (channels[4] - 1024.0f) * dsmx_scalefactor;
+		aux_analog[CHAN_6] = (channels[5] - 1024.0f) * dsmx_scalefactor;
+		aux_analog[CHAN_7] = (channels[6] - 1024.0f) * dsmx_scalefactor;
+		aux_analog[CHAN_8] = (channels[7] - 1024.0f) * dsmx_scalefactor;
+		aux_analog[CHAN_9] = (channels[8] - 1024.0f) * dsmx_scalefactor;
+		aux_analog[CHAN_10] = (channels[9] - 1024.0f) * dsmx_scalefactor;
+	#endif
 
 				aux_analogchange[CHAN_5] = (aux_analog[CHAN_5] != lastaux_analog[CHAN_5]) ? 1 : 0;
 				aux_analogchange[CHAN_6] = (aux_analog[CHAN_6] != lastaux_analog[CHAN_6]) ? 1 : 0;
@@ -347,18 +349,4 @@ if ( framestarted == 1){
 	}
 }	
 	#endif
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 

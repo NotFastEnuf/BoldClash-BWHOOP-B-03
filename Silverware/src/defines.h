@@ -142,39 +142,74 @@
 #define FORWARD DIR2
 #define REVERSE DIR1
 
+
+#ifdef KALMAN_GYRO
 // kalman Q/R ratio for Q = 0.02
 // loop time 1000Hz
-#define	KAL1_HZ_10	0.004078
-#define	KAL1_HZ_20	0.015952
-#define	KAL1_HZ_30	0.035546
-#define	KAL1_HZ_40	0.062984
-#define	KAL1_HZ_50	0.097857
-#define	KAL1_HZ_60	0.139957
-#define	KAL1_HZ_70	0.190992
-#define	KAL1_HZ_80	0.249072
-#define	KAL1_HZ_90	0.308894
-#define	KAL1_HZ_100	0.397188
-#define	KAL1_HZ_120	0.542488
-#define	KAL1_HZ_140	0.719026
-#define	KAL1_HZ_160	0.928746
-#define	KAL1_HZ_180	1.144837
-#define	KAL1_HZ_200	1.354386
-#define	KAL1_HZ_220	1.611742
-#define	KAL1_HZ_240	1.87532
-#define	KAL1_HZ_260	2.123421
-#define	KAL1_HZ_280	2.377006
-#define	KAL1_HZ_300	2.595641
-#define	KAL1_HZ_320	2.864404
-#define	KAL1_HZ_340	3.052077
-#define	KAL1_HZ_360	3.272997
-#define	KAL1_HZ_380	3.44942
-#define	KAL1_HZ_400	3.679173
-#define	KAL1_HZ_420	3.721861
-#define	KAL1_HZ_440	3.880844
-#define	KAL1_HZ_460	3.908564
-#define	KAL1_HZ_480	3.984022
-#define	KAL1_HZ_500	4.100000
+#define	HZ_10	0.004078
+#define	HZ_20	0.015952
+#define	HZ_30	0.035546
+#define	HZ_40	0.062984
+#define	HZ_50	0.097857
+#define	HZ_60	0.139957
+#define	HZ_70	0.190992
+#define	HZ_80	0.249072
+#define	HZ_90	0.308894
+#define	HZ_100	0.397188
+#define	HZ_120	0.542488
+#define	HZ_140	0.719026
+#define	HZ_160	0.928746
+#define	HZ_180	1.144837
+#define	HZ_200	1.354386
+#define	HZ_220	1.611742
+#define	HZ_240	1.87532
+#define	HZ_260	2.123421
+#define	HZ_280	2.377006
+#define	HZ_300	2.595641
+#define	HZ_320	2.864404
+#define	HZ_340	3.052077
+#define	HZ_360	3.272997
+#define	HZ_380	3.44942
+#define	HZ_400	3.679173
+#define	HZ_420	3.721861
+#define	HZ_440	3.880844
+#define	HZ_460	3.908564
+#define	HZ_480	3.984022
+#define	HZ_500	4.100000
+#endif
 
+#ifdef PT1_GYRO
+#define	HZ_10	10
+#define	HZ_20	20
+#define	HZ_30	30
+#define	HZ_40	40
+#define	HZ_50	50
+#define	HZ_60	60
+#define	HZ_70	70
+#define	HZ_80	80
+#define	HZ_90	90
+#define	HZ_100	100
+#define	HZ_120	120
+#define	HZ_140	140
+#define	HZ_160	160
+#define	HZ_180	180
+#define	HZ_200	200
+#define	HZ_220	220
+#define	HZ_240	240
+#define	HZ_260	260
+#define	HZ_280	280
+#define	HZ_300	300
+#define	HZ_320	320
+#define	HZ_340	340
+#define	HZ_360	360
+#define	HZ_380	380
+#define	HZ_400	400
+#define	HZ_420	420
+#define	HZ_440	440
+#define	HZ_460	460
+#define	HZ_480	480
+#define	HZ_500	500
+#endif
 // 1st order lpf alpha
 // for 1000Hz loop frequency
 #define	MFILT1_HZ_10	0.056677

@@ -63,7 +63,7 @@ THE SOFTWARE.
 #endif									   
 						   
 						   
-#if defined (__GNUC__)&& !( defined (SOFT_LPF_NONE) || defined (SOFT_LPF_1ST_HZ) || defined (SOFT_LPF_2ST_HZ) )
+#if defined (__GNUC__)&& !( defined (SOFT_LPF_NONE) || defined (GYRO_FILTER_PASS1) || defined (GYRO_FILTER_PASS2) )
 #warning the soft lpf may not work correctly with gcc due to longer loop time
 #endif
 
