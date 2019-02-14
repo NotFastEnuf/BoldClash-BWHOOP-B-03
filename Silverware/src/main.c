@@ -428,9 +428,13 @@ if( thrfilt > 0.1f )
 if ( LED_NUMBER > 0)
 {
 // led flash logic	
+#ifdef DISABLE_LOW_BATT_LEDS
+    // Do nothing
+#else
     if ( lowbatt )
         ledflash ( 500000 , 8);
     else
+#endif
     {
         if ( rxmode == RXMODE_BIND)
         {// bind mode

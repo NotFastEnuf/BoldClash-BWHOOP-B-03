@@ -15,6 +15,9 @@ extern float rx[4];
 extern char aux[AUXNUMBER];
 extern char lastaux[AUXNUMBER];
 extern char auxchange[AUXNUMBER];
+extern float aux_analog[AUXNUMBER];
+extern float lastaux_analog[AUXNUMBER];
+extern char aux_analogchange[AUXNUMBER];
 int failsafe = 0;
 int rxmode = 0;
 int rx_ready = 0;
@@ -369,6 +372,30 @@ if ( framestarted == 1){
 				aux[CHAN_8] = (crsfChannelData[7] > 1100) ? 1 : 0;
 				aux[CHAN_9] = (crsfChannelData[8] > 1100) ? 1 : 0;
 				aux[CHAN_10] = (crsfChannelData[9] > 1100) ? 1 : 0;							
+
+#ifdef USE_ANALOG_AUX
+        // Map to range 0 to 1
+				aux_analog[CHAN_5] = (crsfChannelData[4] - 990.5f) * 0.00125707103f;
+				aux_analog[CHAN_6] = (crsfChannelData[5] - 990.5f) * 0.00125707103f;
+				aux_analog[CHAN_7] = (crsfChannelData[6] - 990.5f) * 0.00125707103f;
+				aux_analog[CHAN_8] = (crsfChannelData[7] - 990.5f) * 0.00125707103f;
+				aux_analog[CHAN_9] = (crsfChannelData[8] - 990.5f) * 0.00125707103f;
+				aux_analog[CHAN_10] = (crsfChannelData[9] - 990.5f) * 0.00125707103f;
+
+				aux_analogchange[CHAN_5] = (aux_analog[CHAN_5] != lastaux_analog[CHAN_5]) ? 1 : 0;
+				aux_analogchange[CHAN_6] = (aux_analog[CHAN_6] != lastaux_analog[CHAN_6]) ? 1 : 0;
+				aux_analogchange[CHAN_7] = (aux_analog[CHAN_7] != lastaux_analog[CHAN_7]) ? 1 : 0;
+				aux_analogchange[CHAN_8] = (aux_analog[CHAN_8] != lastaux_analog[CHAN_8]) ? 1 : 0;
+				aux_analogchange[CHAN_9] = (aux_analog[CHAN_9] != lastaux_analog[CHAN_9]) ? 1 : 0;
+				aux_analogchange[CHAN_10] = (aux_analog[CHAN_10] != lastaux_analog[CHAN_10]) ? 1 : 0;
+
+				lastaux_analog[CHAN_5] = aux_analog[CHAN_5];
+				lastaux_analog[CHAN_6] = aux_analog[CHAN_6];
+				lastaux_analog[CHAN_7] = aux_analog[CHAN_7];
+				lastaux_analog[CHAN_8] = aux_analog[CHAN_8];
+				lastaux_analog[CHAN_9] = aux_analog[CHAN_9];
+				lastaux_analog[CHAN_10] = aux_analog[CHAN_10];
+#endif
 
 
 

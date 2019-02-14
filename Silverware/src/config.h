@@ -167,6 +167,9 @@
 // *************voltage hysteresis in volts
 #define HYST 0.10
 
+// *************disable low battery LED flashing
+//#define DISABLE_LOW_BATT_LEDS
+
 // *************automatic voltage telemetry correction/calibration factor - change the values below if voltage telemetry is inaccurate
 // Corrects for an offset error in the telemetry measurement (same offset across the battery voltage range)
 #define ACTUAL_BATTERY_VOLTAGE 4.20
