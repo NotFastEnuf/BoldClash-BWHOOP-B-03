@@ -167,23 +167,9 @@
 // *************voltage hysteresis in volts
 #define HYST 0.10
 
-// *************disable low battery LED flashing
-//#define DISABLE_LOW_BATT_LEDS
-
 // *************automatic voltage telemetry correction/calibration factor - change the values below if voltage telemetry is inaccurate
-// Corrects for an offset error in the telemetry measurement (same offset across the battery voltage range)
 #define ACTUAL_BATTERY_VOLTAGE 4.20
 #define REPORTED_TELEMETRY_VOLTAGE 4.20
-
-// *************two-point automatic voltage telemetry correction/calibration factor - change the values below if voltage telemetry is inaccurate
-// Use this method when the difference at the high end is different than the difference at the low end. Corrects both slope and offset of the _assumed_ linear error.
-//#define USE_TWO_POINT_VOLTAGE_CORRECTION
-#define ACTUAL_BATTERY_VOLTAGE_LO 3.60
-#define ACTUAL_BATTERY_VOLTAGE_HI 4.20
-#define REPORTED_TELEMETRY_VOLTAGE_LO 3.60
-#define REPORTED_TELEMETRY_VOLTAGE_HI 4.20
-#define ACTUAL_BATTERY_VOLTAGE_RANGE (ACTUAL_BATTERY_VOLTAGE_HI - ACTUAL_BATTERY_VOLTAGE_LO)
-#define REPORTED_TELEMETRY_VOLTAGE_RANGE (REPORTED_TELEMETRY_VOLTAGE_HI - REPORTED_TELEMETRY_VOLTAGE_LO)
 
 
 
@@ -269,11 +255,6 @@
  
 // *************throttle angle compensation in level mode
 //#define AUTO_THROTTLE
-
-
-// Betaflight like mix scaling
-//#define MIX_SCALING
-
 
 // *************mix lower throttle reduces thrust imbalances by reducing throttle proportionally to the adjustable reduction percent
 // *************mix increase throttle increases the authority of the pid controller at lowest throttle values like airmode when combined with idle up

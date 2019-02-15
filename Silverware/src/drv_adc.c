@@ -101,12 +101,7 @@ float adc_read(int channel)
 		#ifdef DEBUG
 		lpf(&debug.adcfilt , (float) adcarray[0] , 0.998);
 		#endif	
-		#ifdef USE_TWO_POINT_VOLTAGE_CORRECTION
-		// CorrectedValue = (((RawValue – RawLow) * ReferenceRange) / RawRange) + ReferenceLow
-		return ( ( ((float) adcarray[0] * (float) ADC_SCALEFACTOR) - (float) REPORTED_TELEMETRY_VOLTAGE_LO ) * ((float) ACTUAL_BATTERY_VOLTAGE_RANGE / (float) REPORTED_TELEMETRY_VOLTAGE_RANGE) ) + (float) ACTUAL_BATTERY_VOLTAGE_LO;
-		#else
 		return (float) adcarray[0] * ((float) (ADC_SCALEFACTOR*(ACTUAL_BATTERY_VOLTAGE/REPORTED_TELEMETRY_VOLTAGE))) ;
-		#endif
 		
 		case 1:
         #ifdef DEBUG
