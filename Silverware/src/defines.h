@@ -1,7 +1,6 @@
 
 // defines for things that do not normally need changing
 
-
 #define MOTOR_BL 0
 #define MOTOR_FL 1
 #define MOTOR_FR 3
@@ -116,6 +115,18 @@
 #define CHAN_ON CH_ON
 #define CHAN_OFF CH_OFF
 #endif
+
+
+#ifdef BETAFLIGHT_RATES
+#define ACRO_EXPO_ROLL BF_EXPO_ROLL
+#define ACRO_EXPO_PITCH BF_EXPO_PITCH
+#define ACRO_EXPO_YAW BF_EXPO_YAW
+#define ANGLE_EXPO_ROLL BF_EXPO_ROLL
+#define ANGLE_EXPO_PITCH BF_EXPO_PITCH
+#define ANGLE_EXPO_YAW BF_EXPO_YAW
+#define MAX_RATE 200*(float)BF_RC_RATE_ROLL*(1/1-(float)BF_SUPER_RATE_ROLL)     // roll max rate used for flip sequencer when bf rates selected
+#endif
+
 
 // used for the pwm driver
 #define CH1 0

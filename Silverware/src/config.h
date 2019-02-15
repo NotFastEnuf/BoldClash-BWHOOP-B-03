@@ -19,12 +19,40 @@
 
 
 //**********************************************************************************************************************
-//***********************************************RECEIVER SETTINGS******************************************************
+//***********************************************RATES & EXPO SETTINGS**************************************************
 
+// *************Select your preffered rate calculation format (define only one)
+#define SILVERWARE_RATES
+//#define BETAFLIGHT_RATES
+
+#ifdef SILVERWARE_RATES
 // *************rate in deg/sec
 // *************for acro mode
 #define MAX_RATE 860.0          //Roll & Pitch axis
 #define MAX_RATEYAW 500.0       //Yaw axis (used in acro and leveling modes)
+
+// *************EXPO from 0.00 to 1.00 , 0 = no exp
+// *************positive = less sensitive near center 
+#define ACRO_EXPO_ROLL 0.80
+#define ACRO_EXPO_PITCH 0.80
+#define ACRO_EXPO_YAW 0.60
+
+#define ANGLE_EXPO_ROLL 0.55
+#define ANGLE_EXPO_PITCH 0.0
+#define ANGLE_EXPO_YAW 0.55
+#endif
+
+#ifdef BETAFLIGHT_RATES
+#define BF_RC_RATE_ROLL 1.00
+#define BF_RC_RATE_PITCH 1.00
+#define BF_RC_RATE_YAW 1.00
+#define BF_SUPER_RATE_ROLL 0.70
+#define BF_SUPER_RATE_PITCH 0.70
+#define BF_SUPER_RATE_YAW 0.70
+#define BF_EXPO_ROLL 0.00
+#define BF_EXPO_PITCH 0.00
+#define BF_EXPO_YAW 0.00
+#endif
 
 // *************rate in deg/sec 
 // *************for angle mode
@@ -36,19 +64,15 @@
 // ************* low rates multiplier if rates are assigned to a channel
 #define LOW_RATES_MULTI 0.5f
 
-// *************EXPO from 0.00 to 1.00 , 0 = no exp
-// *************positive = less sensitive near center 
-#define ACRO_EXPO_ROLL 0.80
-#define ACRO_EXPO_PITCH 0.80
-#define ACRO_EXPO_YAW 0.60
-
-#define ANGLE_EXPO_ROLL 0.55
-#define ANGLE_EXPO_PITCH 0.0
-#define ANGLE_EXPO_YAW 0.55
-
 // *************transmitter stick adjustable deadband for roll/pitch/yaw
 // *************.01f = 1% of stick range - comment out to disable
 #define STICKS_DEADBAND .01f
+
+
+
+
+//**********************************************************************************************************************
+//***********************************************RECEIVER SETTINGS******************************************************
 
 // *************Radio protocol selection
 // *************select only one
