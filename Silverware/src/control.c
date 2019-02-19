@@ -234,7 +234,7 @@ if (aux[LEVELMODE]&&!acro_override){
 	extern float GEstG[3]; // gravity vector for yaw feedforward
 	float yawerror[3] = {0}; // yaw rotation vector
 	// calculate roll / pitch error
-	stick_vector( rates , 0 );
+	stick_vector( rxcopy , 0 );
 	// apply yaw from the top of the quad 
 	yawerror[0] = GEstG[1] * rates[2];
 	yawerror[1] = - GEstG[0] * rates[2];

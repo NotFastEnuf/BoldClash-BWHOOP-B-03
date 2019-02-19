@@ -549,6 +549,10 @@ rgb_dma_start();
 checkrx();
 
 
+#ifdef DEBUG
+	debug.cpu_load = (gettime() - lastlooptime )*1e-3f;
+#endif
+
 while ( (gettime() - time) < LOOPTIME );	
 
 		
