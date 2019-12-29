@@ -413,9 +413,9 @@ float pid(int x )
 				stickTransition[x] = stickTransitionProfileA[x];
 			}				
 				if (stickAccelerator[x] < 1){
-				transitionSetpointWeight[x] = (fabs(rxcopy[x]) * stickTransition[x]) + (1- stickTransition[x]);
+				transitionSetpointWeight[x] = (fabsf(rxcopy[x]) * stickTransition[x]) + (1- stickTransition[x]);
 				}else{
-				transitionSetpointWeight[x] = (fabs(rxcopy[x]) * (stickTransition[x] / stickAccelerator[x])) + (1- stickTransition[x]);	
+				transitionSetpointWeight[x] = (fabsf(rxcopy[x]) * (stickTransition[x] / stickAccelerator[x])) + (1- stickTransition[x]);	
 				}
         static float lastrate[3];
 				static float lastsetpoint[3];
@@ -453,9 +453,9 @@ float pid(int x )
 				stickTransition[x] = stickTransitionProfileA[x];
 			}				
 				if (stickAccelerator[x] < 1){
-				transitionSetpointWeight[x] = (fabs(rxcopy[x]) * stickTransition[x]) + (1- stickTransition[x]);
+				transitionSetpointWeight[x] = (fabsf(rxcopy[x]) * stickTransition[x]) + (1- stickTransition[x]);
 				}else{
-				transitionSetpointWeight[x] = (fabs(rxcopy[x]) * (stickTransition[x] / stickAccelerator[x])) + (1- stickTransition[x]);	
+				transitionSetpointWeight[x] = (fabsf(rxcopy[x]) * (stickTransition[x] / stickAccelerator[x])) + (1- stickTransition[x]);	
 				}
         static float lastrate[3];
 				static float lastsetpoint[3];

@@ -48,6 +48,7 @@ void softserial_write_byte_ex(const SoftSerialData_t* data, uint8_t byte);
 void softserial_set_input(const SoftSerialData_t* data);
 void softserial_set_output(const SoftSerialData_t* data);
 
+__attribute__((always_inline))
 inline void delay_until(uint32_t uS )
 {
 	while (gettime() < uS) ;
